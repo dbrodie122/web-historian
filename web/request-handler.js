@@ -6,18 +6,60 @@ var httpHelpers = require('./http-helpers');
 
 // require more modules/folders here!
 
+//function works, filepath will need adjustment [ ]
 exports.handleRequest = function (req, res) {
   console.log();
   if (req.method === 'GET') {
     res.writeHead(200, httpHelpers.headers);
     //fs.readFile(__dirname + '/public/index.html', (err, data) => {
-    fs.readFile('/Users/student/Desktop/hrsf73-web-historian/web/public/index.html', (err, data) => {
+    // get reqUrl 
+    // if reqUrl is homepage url
+    //'/Users/student/Desktop/hrsf73-web-historian/web/public/index.html'
+    // console.log('***********request url *************', req.url);
+    if (req.url === '/') {
+      fs.readFile('/' + __dirname + '/public/index.html', (err, data) => {
+        if (err) {
+          throw err;
+        } else {
+          res.end(data.toString());
+        }
+      });
+    } else {
+      // console.log('***********request url *************', req.url);
+      // console.log('!!!!!!!!!!!!!!directory: ', __dirname);
+      
+      // fs.readFile('/Users/student/Desktop/hrsf73-web-historian/test/testdata/sites' + req.url, (err, data) => {
+      //   if (err) {
+      //     throw err;
+      //   } else {
+      //     res.end(data.toString());
+      //   }
+      // });
+    
+    fs.readdir('/Users/student/Desktop/hrsf73-web-historian/test/testdata/sites', (err, files) => {
+      console.log('#####files#### :', files);
+      console.log('$$$$$$$$$request.url$$$$$$ : ',req.url);
       if (err) {
         throw err;
       } else {
-        res.end(data.toString());
+        debugger;
+        files.forEach(file => {
+          console.log('@@@@@@@file@@@@@ : ', file);
+          if (file === req.url) {
+            fs.readFile('/Users/student/Desktop/hrsf73-web-historian/test/testdata/sites/' + file, (err, data) => {
+              if (err) {
+                throw err;
+              } else {
+                res.end(data.toString());
+              }
+            });
+          }
+        });
       }
     });
+    }
+    //need to know:
+      //how to get the url from the searchbar if they type it in there
    
 
   }

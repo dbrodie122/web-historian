@@ -10,6 +10,8 @@ var port = 8080;
 var ip = '127.0.0.1';
 var server = http.createServer(handler.handleRequest);
 
+
+//Not sure what's going on here.  Don't forget to look into it
 if (module.parent) {
   module.exports = server;
 } else {

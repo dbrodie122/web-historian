@@ -32,24 +32,37 @@ exports.readListOfUrls = function(callback) { //worker?
     } else {
       callback(data.toString().split('\n'));
     }
-    console.log('##### data from readListOfUrls ##### : ', data.toString());
   });
 };
 
 exports.isUrlInList = function(url, callback) { //service?
-  // read file
-  // search through the file to see if it includes the Url
-  // if yes
-    // then cb(url)
-  // if not
-    // return false
-  
+  fs.readFile(exports.paths.list, (err, data) => {
+    if (err) {
+      throw err;
+    } else {
+      callback(_.contains(data.toString().split('\n'), url));
+    }
+  }); 
 };
 
 exports.addUrlToList = function(url, callback) { //service?
+  fs.appendFile(exports.paths.list, url, err => {
+    if (err) {
+      throw err;
+    } else {
+      callback(url);
+    }
+  });
 };
 
 exports.isUrlArchived = function(url, callback) { //both?
+  fs.readdir(exports.paths.archivedSites, (err, files) => {
+    if (err) {
+      throw err;
+    } else {
+      callback(_.contains(files, url));
+    }
+  }); 
 };
 
 exports.downloadUrls = function(urls) { //worker?

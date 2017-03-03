@@ -10,12 +10,7 @@ var httpHelpers = require('./http-helpers');
 exports.handleRequest = function (req, res) {
   console.log();
   if (req.method === 'GET') {
-    
-    //fs.readFile(__dirname + '/public/index.html', (err, data) => {
-    // get reqUrl 
-    // if reqUrl is homepage url
-    //'/Users/student/Desktop/hrsf73-web-historian/web/public/index.html'
-    // console.log('***********request url *************', req.url);
+  
     if (req.url === '/') {
       res.writeHead(200, httpHelpers.headers);
       fs.readFile('/' + __dirname + '/public/index.html', (err, data) => {
@@ -26,10 +21,8 @@ exports.handleRequest = function (req, res) {
         }
       });
     } else {
-      // console.log('***********request url *************', req.url);
-      // console.log('!!!!!!!!!!!!!!directory: ', __dirname);
-      
-      fs.readFile(archive.paths.archivedSites + '/' + req.url, (err, data) => {
+      console.log(req.url.slice(1));
+      fs.readFile(archive.paths.archivedSites + req.url + '.htm', (err, data) => {
         if (err) {
           res.writeHead(404, httpHelpers.headers);
           res.end();
@@ -39,9 +32,6 @@ exports.handleRequest = function (req, res) {
         }
       });
     }
-
-   
-
   }
   if (req.method === 'POST') {
     res.writeHead(302, httpHelpers.headers);
@@ -50,6 +40,20 @@ exports.handleRequest = function (req, res) {
       body.push(chunk);
     }).on('end', function() {
       body = Buffer.concat(body).toString();
+      //need to check if the url (from body) is in the sites.txt.
+      archive.isUrlInList(body, function(found) {
+        //if yes, check to see if the url is stored in the archive.
+        if (found) {
+          archive.isUrlArchived(body, function(exists) {
+            if (exists) {
+
+            }
+          });
+        }
+      });
+          //if yes, show the site.
+          //if no, show the loading page.
+        //if no (the url is not in sites.txt) then append the url to sites.txt && show the loading page.
       fs.appendFile(archive.paths.list, body.slice(4) + '\n', (err) => {
         if (err) {
           throw err;
@@ -57,15 +61,7 @@ exports.handleRequest = function (req, res) {
       });
       res.end();
     });
-    //check the data on the post
-      //extract the url
-      
-    //fs.appendFile('sites.txt', );
-    
-      //archive.isUrlInList(url, archive.isUrlArchived)
-    //use archive.isUrlInList to check and see if the URL is already written in our sites.txt
-    // if it's n
-    //check to see if its in the archive as well
+
   }
   
 };
